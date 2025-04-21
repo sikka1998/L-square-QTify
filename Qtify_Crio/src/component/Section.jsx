@@ -27,7 +27,6 @@ const Section = ({ title, fetchUrl }) => {
     const getAlbums = async () => {
       setLoading(true);
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
         const res = await axios.get(fetchUrl);
         setAlbums(res.data);
       } catch (error) {
