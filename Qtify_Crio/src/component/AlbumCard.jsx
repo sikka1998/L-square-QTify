@@ -27,7 +27,11 @@ export default function AlbumCard({ title, imageURL, follows }) {
           </CardContent>
         </CardActionArea>
       </Card>
-      <Typography variant="h6" component="div" sx={{ marginLeft: "20px" }}>
+      <Typography
+        variant="h6"
+        component="div"
+        sx={{ marginLeft: "20px", marginTop: "-10px" }}
+      >
         {title}
       </Typography>
     </>

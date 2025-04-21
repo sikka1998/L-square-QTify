@@ -10,7 +10,7 @@ import {
   Avatar,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import QtifyLogo from '../assets/Qtify_logo.png';
+import QtifyLogo from "../assets/Qtify_logo.png";
 
 export default function Navbar() {
   return (
@@ -27,11 +27,12 @@ export default function Navbar() {
         }}
       >
         {/* Logo */}
-        <Box display="flex" alignItems="center" justifyContent="center" gap={1} marginLeft={2}>
+        <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
           <Avatar
             src={QtifyLogo}
             alt="Logo"
             sx={{ width: 100, height: 60 }}
+            marginLeft={2}
           />
         </Box>
 
