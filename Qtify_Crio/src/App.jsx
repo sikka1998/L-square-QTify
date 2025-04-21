@@ -1,6 +1,8 @@
 import Navbar from "./component/Navbar";
 import Hero from "./component/Hero";
 import Section from "./component/Section";
+import "swiper/css";
+import "swiper/css/navigation";
 
 function App() {
   return (

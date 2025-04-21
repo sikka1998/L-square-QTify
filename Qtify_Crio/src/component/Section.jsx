@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import AlbumCard from "./AlbumCard";
+import Carousel from "./Carousel/Carousel";
 
 const Section = ({ title, fetchUrl }) => {
   // State to store albums
@@ -79,8 +80,20 @@ const Section = ({ title, fetchUrl }) => {
             </Grid>
           ))}
         </Grid>
+      ) : collapsed ? (
+        // === Carousel view ===
+        <Carousel
+          data={visibleAlbums}
+          renderComponent={(album) => (
+            <AlbumCard
+              title={album.title}
+              imageURL={album.image}
+              follows={album.follows}
+            />
+          )}
+        />
       ) : (
-        // === If data is loaded, show real cards ===
+        // === Grid view ===
         <Grid container spacing={2}>
           {visibleAlbums.map((album) => (
             <Grid item xs={6} sm={4} md={3} lg={2} key={album.id}>
