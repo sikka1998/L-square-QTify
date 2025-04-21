@@ -7,71 +7,99 @@ import {
   Card,
   CardContent,
   Skeleton,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import axios from "axios";
 import AlbumCard from "./AlbumCard";
 import Carousel from "./Carousel/Carousel";
 
-const Section = ({ title, fetchUrl }) => {
-  // State to store albums
-  const [albums, setAlbums] = useState([]);
-
-  // Loading state
+const Section = ({
+  title,
+  fetchUrl,
+  showTabs = false,
+  disableCollapse = false,
+  contentType = "album",
+}) => {
+  const [data, setData] = useState([]);
+  const [genres, setGenres] = useState([]);
+  const [selectedGenre, setSelectedGenre] = useState("All");
   const [loading, setLoading] = useState(true);
-
-  // Toggle collapse/expand
   const [collapsed, setCollapsed] = useState(true);
 
-  // Fetch data from API
   useEffect(() => {
-    const getAlbums = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(fetchUrl);
-        setAlbums(res.data);
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
+        const [mainRes, genreRes] = await Promise.all([
+          axios.get(fetchUrl),
+          showTabs
+            ? axios.get("https://qtify-backend-labs.crio.do/genres")
+            : Promise.resolve({ data: { data: [] } }),
+        ]);
+
+        setData(mainRes.data);
+        setGenres(["All", ...genreRes.data.data.map((g) => g.label)]);
+      } catch (err) {
+        console.error("Failed to fetch:", err);
       } finally {
         setLoading(false);
       }
     };
+    fetchData();
+  }, [fetchUrl, showTabs]);
 
-    getAlbums();
-  }, [fetchUrl]);
+  const filteredData =
+    selectedGenre === "All"
+      ? data
+      : data.filter((item) => item.genre.label === selectedGenre);
 
-  // Show fewer albums if collapsed
-  const visibleAlbums = collapsed ? albums.slice(0, 6) : albums;
+  const visibleItems =
+    disableCollapse || !collapsed ? filteredData : filteredData.slice(0, 6);
 
   return (
-    <Box style={{ marginTop: "2rem" }}>
-      {/* === Header Section === */}
+    <Box mt={4}>
       <Grid container justifyContent="space-between" alignItems="center" mb={2}>
-        <Grid item>
-          <Typography variant="h5" fontWeight={600}>
-            {title}
-          </Typography>
-        </Grid>
-        <Grid item>
+        <Typography variant="h5" fontWeight={600}>
+          {title}
+        </Typography>
+        {!disableCollapse && (
           <Button
-            variant="text"
-            color="primary"
             onClick={() => setCollapsed(!collapsed)}
             sx={{ textTransform: "none" }}
           >
             {collapsed ? "Show All" : "Collapse"}
           </Button>
-        </Grid>
+        )}
       </Grid>
 
-      {/* === Grid Section === */}
+      {showTabs && (
+        <Box mb={2}>
+          <Tabs
+            value={selectedGenre}
+            onChange={(e, val) => setSelectedGenre(val)}
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              "& .MuiTab-root": { textTransform: "none", fontWeight: 500 },
+              "& .Mui-selected": { color: "#fff" },
+              "& .MuiTabs-indicator": { backgroundColor: "#fff" },
+            }}
+          >
+            {genres.map((genre) => (
+              <Tab key={genre} label={genre} value={genre} />
+            ))}
+          </Tabs>
+        </Box>
+      )}
+
       {loading ? (
-        // === While loading, show spinner + skeletons ===
         <Grid container spacing={2}>
-          {Array.from(new Array(6)).map((_, index) => (
-            <Grid item xs={6} sm={4} md={3} lg={2} key={index}>
-              <Card sx={{ borderRadius: 2, minWidth: 200, margin: "20px" }}>
-                <Skeleton variant="rectangular" width="100%" height={160} />
-                <CardContent sx={{ padding: 1 }}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Grid item xs={6} sm={4} md={3} lg={2} key={i}>
+              <Card sx={{ borderRadius: 2 }}>
+                <Skeleton variant="rectangular" height={160} />
+                <CardContent>
                   <Skeleton width="80%" />
                   <Skeleton width="60%" />
                 </CardContent>
@@ -79,27 +107,36 @@ const Section = ({ title, fetchUrl }) => {
             </Grid>
           ))}
         </Grid>
-      ) : collapsed ? (
-        // === Carousel view ===
+      ) : disableCollapse || collapsed ? (
         <Carousel
-          data={visibleAlbums}
-          renderComponent={(album) => (
+          data={visibleItems}
+          renderComponent={(item) => (
             <AlbumCard
-              title={album.title}
-              imageURL={album.image}
-              follows={album.follows}
+              key={item.id}
+              id={item.id}
+              title={item.title}
+              imageURL={item.image}
+              followsOrLikes={
+                contentType === "song" ? item.likes : item.follows
+              }
+              isSong={contentType === "song"}
+              artists={item.artists}
             />
           )}
         />
       ) : (
-        // === Grid view ===
         <Grid container spacing={2}>
-          {visibleAlbums.map((album) => (
-            <Grid item xs={6} sm={4} md={3} lg={2} key={album.id}>
+          {visibleItems.map((item) => (
+            <Grid item xs={6} sm={4} md={3} lg={2} key={item.id}>
               <AlbumCard
-                title={album.title}
-                imageURL={album.image}
-                follows={album.follows}
+                id={item.id}
+                title={item.title}
+                imageURL={item.image}
+                followsOrLikes={
+                  contentType === "song" ? item.likes : item.follows
+                }
+                isSong={contentType === "song"}
+                artists={item.artists}
               />
             </Grid>
           ))}

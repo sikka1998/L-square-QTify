@@ -1,15 +1,44 @@
-import * as React from "react";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
-import CardActionArea from "@mui/material/CardActionArea";
-import Chip from "@mui/material/Chip";
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  CardActionArea,
+  Chip,
+} from "@mui/material";
+import { PlaybackContext } from "../App";
 
-export default function AlbumCard({ title, imageURL, follows }) {
+export default function AlbumCard({ title, imageURL, followsOrLikes, isSong, id, artists }) {
+  const navigate = useNavigate();
+  const { setCurrentSong } = useContext(PlaybackContext);
+  
+  // Generate the chip label based on whether it's a song or album
+  const chipLabel = followsOrLikes 
+    ? `${followsOrLikes} ${isSong ? 'Likes' : 'Follows'}`
+    : null;
+
+  const handleCardClick = () => {
+    if (isSong) {
+      // Play the song
+      setCurrentSong({
+        title,
+        image: imageURL,
+        artist: artists ? artists.join(", ") : "Unknown Artist",
+      });
+    } else if (id) {
+      // Navigate to album details
+      navigate(`/album/${id}`);
+    }
+  };
+
   return (
     <>
-      <Card sx={{ minWidth: 200, margin: "20px" }}>
+      <Card 
+        sx={{ minWidth: 160, maxWidth: 200, margin: "10px", cursor: "pointer" }}
+        onClick={handleCardClick}
+      >
         <CardActionArea>
           <CardMedia
             component="img"
@@ -18,12 +47,13 @@ export default function AlbumCard({ title, imageURL, follows }) {
             alt={title}
           />
           <CardContent>
-            <Chip
-              label={follows + " Follows"}
-              variant="outlined"
-              sx={{ backgroundColor: "#121212", color: "#fff" }}
-              value={follows}
-            />
+            {chipLabel && (
+              <Chip
+                label={chipLabel}
+                variant="outlined"
+                sx={{ backgroundColor: "#121212", color: "#fff" }}
+              />
+            )}
           </CardContent>
         </CardActionArea>
       </Card>

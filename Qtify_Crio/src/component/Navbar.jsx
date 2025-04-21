@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   AppBar,
   Box,
   Toolbar,
-  Typography,
   Button,
   InputBase,
   IconButton,
@@ -11,70 +10,121 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import QtifyLogo from "../assets/Qtify_logo.png";
+import FeedbackModal from "./FeedbackModal";
 
 export default function Navbar() {
-  return (
-    <AppBar
-      position="static"
-      sx={{ backgroundColor: "#34C94B", padding: "0px 32px", height: "74px" }}
-      elevation={0}
-    >
-      <Toolbar
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        {/* Logo */}
-        <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
-          <Avatar
-            src={QtifyLogo}
-            alt="Logo"
-            sx={{ width: 100, height: 60 }}
-            marginLeft={2}
-          />
-        </Box>
+  const [openFeedbackModal, setOpenFeedbackModal] = useState(false);
 
-        {/* Search Bar */}
-        <Box
+  const handleOpenFeedbackModal = () => {
+    setOpenFeedbackModal(true);
+  };
+
+  const handleCloseFeedbackModal = () => {
+    setOpenFeedbackModal(false);
+  };
+
+  return (
+    <>
+      <AppBar
+        position="static"
+        sx={{ 
+          backgroundColor: "#34C94B", 
+          padding: { xs: "0px 16px", md: "0px 32px" }, 
+          height: "74px" 
+        }}
+        elevation={0}
+      >
+        <Toolbar
           sx={{
             display: "flex",
-            border: "1px solid black",
-            borderRadius: "8px",
-            overflow: "hidden",
-            width: "40%",
-            backgroundColor: "#fff",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: 0,
+            minHeight: "74px",
           }}
         >
-          <InputBase
-            placeholder="Search an album of your choice"
-            sx={{ px: 2, flexGrow: 1 }}
-          />
-          <IconButton sx={{ borderLeft: "1px solid black", borderRadius: 0 }}>
-            <SearchIcon />
-          </IconButton>
-        </Box>
+          {/* Logo */}
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <Avatar
+              src={QtifyLogo}
+              alt="Qtify"
+              variant="square"
+              sx={{ 
+                width: "85px", 
+                height: "43px", 
+                objectFit: "contain",
+                '& .MuiAvatar-img': {
+                  objectFit: 'contain'
+                }
+              }}
+            />
+          </Box>
 
-        {/* Button */}
-        <Button
-          variant="contained"
-          sx={{
-            backgroundColor: "#121212",
-            color: "#34C94B",
-            fontWeight: 600,
-            fontFamily: "Poppins, sans-serif",
-            textTransform: "none",
-            "&:hover": {
-              backgroundColor: "#000",
-            },
-            borderRadius: "8px",
-            px: 3,
-          }}
-        >
-          Give Feedback
-        </Button>
-      </Toolbar>
-    </AppBar>
+          {/* Search Bar */}
+          <Box
+            sx={{
+              display: "flex",
+              border: "1px solid black",
+              borderRadius: "8px",
+              overflow: "hidden",
+              width: { xs: "35%", sm: "40%", md: "50%" },
+              maxWidth: "540px",
+              backgroundColor: "#fff",
+              height: "38px",
+            }}
+          >
+            <InputBase
+              placeholder="Search a album of your choice"
+              sx={{ 
+                px: 2, 
+                flexGrow: 1,
+                fontSize: "14px",
+                '&::placeholder': {
+                  fontSize: "14px",
+                  color: "#121212"
+                }
+              }}
+            />
+            <IconButton 
+              sx={{ 
+                borderLeft: "1px solid black", 
+                borderRadius: 0,
+                backgroundColor: "#fff",
+                '&:hover': {
+                  backgroundColor: "#f8f8f8"
+                }
+              }}
+            >
+              <SearchIcon />
+            </IconButton>
+          </Box>
+
+          {/* Button */}
+          <Button
+            variant="contained"
+            onClick={handleOpenFeedbackModal}
+            sx={{
+              backgroundColor: "#121212",
+              color: "#34C94B",
+              fontWeight: 600,
+              fontFamily: "Poppins, sans-serif",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "#000",
+              },
+              borderRadius: "8px",
+              padding: "8px 16px",
+              fontSize: "14px",
+              height: "38px",
+            }}
+          >
+            Give Feedback
+          </Button>
+        </Toolbar>
+      </AppBar>
+
+      {/* Feedback Modal */}
+      <FeedbackModal open={openFeedbackModal} handleClose={handleCloseFeedbackModal} />
+    </>
   );
 }
