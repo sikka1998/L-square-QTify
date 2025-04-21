@@ -29,7 +29,7 @@ export default function Navbar() {
         position="static"
         sx={{ 
           backgroundColor: "#34C94B", 
-          padding: { xs: "0px 16px", md: "0px 32px" }, 
+          padding: 0, 
           height: "74px" 
         }}
         elevation={0}
@@ -41,22 +41,22 @@ export default function Navbar() {
             alignItems: "center",
             padding: 0,
             minHeight: "74px",
+            pl: 2,
+            pr: 2
           }}
         >
           {/* Logo */}
-          <Box display="flex" alignItems="center" justifyContent="center" ml={2}>
-            <Avatar
+          <Box display="flex" alignItems="center" ml={1}>
+            <img
               src={QtifyLogo}
               alt="Qtify"
-              variant="square"
-              sx={{ 
+              style={{ 
                 width: "85px", 
                 height: "43px", 
-                objectFit: "contain",
-                '& .MuiAvatar-img': {
-                  objectFit: 'contain'
-                }
+                objectFit: "contain", 
+                display: "block"
               }}
+              data-testid="logo"
             />
           </Box>
 
