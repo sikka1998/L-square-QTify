@@ -44,7 +44,7 @@ export default function Navbar() {
           }}
         >
           {/* Logo */}
-          <Box display="flex" alignItems="center" justifyContent="center">
+          <Box display="flex" alignItems="center" justifyContent="center" ml={2}>
             <Avatar
               src={QtifyLogo}
               alt="Qtify"

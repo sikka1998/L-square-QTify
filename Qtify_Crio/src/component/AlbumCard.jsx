@@ -7,6 +7,7 @@ import {
   Typography,
   CardActionArea,
   Chip,
+  Box,
 } from "@mui/material";
 import { PlaybackContext } from "../App";
 
@@ -34,9 +35,16 @@ export default function AlbumCard({ title, imageURL, followsOrLikes, isSong, id,
   };
 
   return (
-    <>
+    <Box className="album-card" data-testid="album-card">
       <Card 
-        sx={{ minWidth: 160, maxWidth: 200, margin: "10px", cursor: "pointer" }}
+        sx={{ 
+          minWidth: 160, 
+          maxWidth: 200, 
+          margin: "10px", 
+          cursor: "pointer",
+          backgroundColor: "#121212",
+          color: "#FFFFFF",
+        }}
         onClick={handleCardClick}
       >
         <CardActionArea>
@@ -60,10 +68,22 @@ export default function AlbumCard({ title, imageURL, followsOrLikes, isSong, id,
       <Typography
         variant="h6"
         component="div"
-        sx={{ marginLeft: "20px", marginTop: "-10px" }}
+        className="album-title"
+        data-testid="album-title"
+        sx={{ 
+          marginLeft: "20px", 
+          marginTop: "-10px",
+          color: "#FFFFFF",
+          fontSize: "16px",
+          fontWeight: "bold",
+          width: "180px",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap"
+        }}
       >
         {title}
       </Typography>
-    </>
+    </Box>
   );
 }

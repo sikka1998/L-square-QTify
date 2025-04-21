@@ -38,10 +38,14 @@ const Section = ({
             : Promise.resolve({ data: { data: [] } }),
         ]);
 
-        setData(mainRes.data);
-        setGenres(["All", ...genreRes.data.data.map((g) => g.label)]);
+        setData(Array.isArray(mainRes.data) ? mainRes.data : []);
+        
+        if (showTabs && genreRes.data && genreRes.data.data) {
+          setGenres(["All", ...genreRes.data.data.map((g) => g.label)]);
+        }
       } catch (err) {
         console.error("Failed to fetch:", err);
+        setData([]);
       } finally {
         setLoading(false);
       }
@@ -52,13 +56,13 @@ const Section = ({
   const filteredData =
     selectedGenre === "All"
       ? data
-      : data.filter((item) => item.genre.label === selectedGenre);
+      : data.filter((item) => item.genre && item.genre.label === selectedGenre);
 
-  const visibleItems =
-    disableCollapse || !collapsed ? filteredData : filteredData.slice(0, 6);
+  const visibleItems = 
+    (disableCollapse || !collapsed) ? filteredData : filteredData;
 
   return (
-    <Box mt={4}>
+    <Box mt={4} className={`${title.toLowerCase().replace(/\s+/g, '-')}-section`}>
       <Grid container justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="h5" fontWeight={600}>
           {title}
@@ -107,25 +111,27 @@ const Section = ({
             </Grid>
           ))}
         </Grid>
-      ) : disableCollapse || collapsed ? (
-        <Carousel
-          data={visibleItems}
-          renderComponent={(item) => (
-            <AlbumCard
-              key={item.id}
-              id={item.id}
-              title={item.title}
-              imageURL={item.image}
-              followsOrLikes={
-                contentType === "song" ? item.likes : item.follows
-              }
-              isSong={contentType === "song"}
-              artists={item.artists}
-            />
-          )}
-        />
+      ) : collapsed ? (
+        <Box sx={{ backgroundColor: "#121212", p: 1, borderRadius: 2 }}>
+          <Carousel
+            data={visibleItems}
+            renderComponent={(item) => (
+              <AlbumCard
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                imageURL={item.image}
+                followsOrLikes={
+                  contentType === "song" ? item.likes : item.follows
+                }
+                isSong={contentType === "song"}
+                artists={item.artists}
+              />
+            )}
+          />
+        </Box>
       ) : (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} sx={{ backgroundColor: "#121212", p: 1, borderRadius: 2 }}>
           {visibleItems.map((item) => (
             <Grid item xs={6} sm={4} md={3} lg={2} key={item.id}>
               <AlbumCard
